@@ -1,0 +1,668 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "HK Prog II Homework API by Taaniel Levin",
+        "version": "1.0.0",
+        "title": "Homework API",
+        "contact": {
+            "email": "taaniell@tlu.ee"
+        }
+    },
+    "schemes": [
+        "http"
+    ],
+    "host": "localhost:1337",
+    "basePath": "/",
+    "tags": [
+        {
+        "name": "Courses"
+        },
+        {
+        "name": "Rooms"
+        },
+        {
+        "name": "Subjects"
+        },
+        {
+        "name": "Teachers"
+        }
+    ],
+    "paths": {
+        "/courses": {
+            "get": {
+                "tags": ["Courses"],
+                "summary": "Get all the courses",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/coursesResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Courses"],
+                "summary": "Create a new course",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Name of the course",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/coursesResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/coursesResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/{id}": {
+            "patch": {
+                "tags": ["Courses"],
+                "summary": "Edit the course",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the course that needs to be changed",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Name of the course",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/coursesResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/coursesResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Courses"],
+                "summary": "Delete the course",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the course that needs to be deleted",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/coursesResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms": {
+            "get": {
+                "tags": ["Rooms"],
+                "summary": "Get all the rooms",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/roomsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Rooms"],
+                "summary": "Create a new room",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Number of the room",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/roomsResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/roomsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{id}": {
+            "patch": {
+                "tags": ["Rooms"],
+                "summary": "Edit the room",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the room that needs to be changed",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Number of the room",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/roomsResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/roomsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Rooms"],
+                "summary": "Delete the room",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the room that needs to be deleted",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/roomsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/subjects": {
+            "get": {
+                "tags": ["Subjects"],
+                "summary": "Get all the subjects",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/subjectsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Subjects"],
+                "summary": "Create a new subject",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Name of the subject",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/subjectsResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/subjectsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/subjects/{id}": {
+            "patch": {
+                "tags": ["Subjects"],
+                "summary": "Edit the subject",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the subject that needs to be changed",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Name of the subject",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/subjectsResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/subjectsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Subjects"],
+                "summary": "Delete the subject",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the subject that needs to be deleted",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/subjectsResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/teachers": {
+            "get": {
+                "tags": ["Teachers"],
+                "summary": "Get all the teachers",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/teachersResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Teachers"],
+                "summary": "Create a new teacher",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Name of the teacher",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/teachersResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/teachersResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/teachers/{id}": {
+            "patch": {
+                "tags": ["Teachers"],
+                "summary": "Edit the teacher",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the teacher that needs to be changed",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Name of the teacher",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/teachersResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/teachersResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Teachers"],
+                "summary": "Delete the teacher",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the teacher that needs to be deleted",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/teachersResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/invalidResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "coursesResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "roomsResponse": {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "type": "integer"
+                }
+            }
+        },
+        "subjectsResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "teachersResponse": {
+            "type": "object",
+            "properties": {
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                }
+            }
+        },
+        "invalidResponse": {
+            "type": "object",
+            "properties": {
+                "statusCode": {
+                    "type": "integer"
+                },
+                "errorMessage": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
