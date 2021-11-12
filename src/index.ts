@@ -33,9 +33,9 @@ app.get('/subjects/:id', subjectsController.getSubjectById);
 app.get('/teachers/:id', teachersController.getTeacherById);
 
 
-app.post('/courses', /*validate(nameSchema),*/ coursesController.createCourse);
+app.post('/courses', validate(nameSchema), coursesController.createCourse);
 app.post('/rooms', roomsController.createRoom);
-app.post('/subjects', /*validate(nameSchema),*/ subjectsController.createSubject);
+app.post('/subjects', validate(nameSchema), subjectsController.createSubject);
 app.post('/teachers', teachersController.createTeacher);
 
 

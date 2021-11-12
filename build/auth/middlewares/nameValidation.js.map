@@ -1,0 +1,1 @@
+{"version":3,"file":"nameValidation.js","sourceRoot":"","sources":["../../../src/auth/middlewares/nameValidation.ts"],"names":[],"mappings":";;AAAA,MAAM,GAAG,GAAG,OAAO,CAAC,KAAK,CAAC,CAAC;AAE3B,MAAM,UAAU,GAAG,GAAG,CAAC,MAAM,CAAC;IAC1B,IAAI,EAAE,GAAG,CAAC,MAAM,EAAE,CAAC,QAAQ,EAAE;CAChC,CAAC,CAAC;AAEH,kBAAe,UAAU,CAAC"}

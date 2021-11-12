@@ -7,9 +7,7 @@ const validate = (schema: AnySchema) => async (
     next: NextFunction
 ) => {
     try {
-        await schema.validate({
-            body: req.body,
-        });
+        await schema.validate(req.body);
         return next();
     } catch (e) {
         return res.status(400).json({ e });
