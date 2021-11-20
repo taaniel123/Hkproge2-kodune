@@ -1,666 +1,1041 @@
 {
-    "swagger": "2.0",
+    "openapi": "3.0.1",
     "info": {
-        "description": "HK Prog II Homework API by Taaniel Levin",
-        "version": "1.0.0",
-        "title": "Homework API",
-        "contact": {
-            "email": "taaniell@tlu.ee"
-        }
+      "title": "Homework API",
+      "description": "HK Prog II Homework API by Taaniel Levin",
+      "contact": {
+        "email": "taaniell@tlu.ee"
+      },
+      "version": "1.1"
     },
-    "schemes": [
-        "http"
+    "servers": [
+      {
+        "url": "http://localhost:1337/"
+      }
     ],
-    "host": "localhost:1337",
-    "basePath": "/",
     "tags": [
-        {
+      {
+        "name": "Login"
+      },
+      {
+        "name": "Users"
+      },
+      {
         "name": "Courses"
-        },
-        {
+      },
+      {
         "name": "Rooms"
-        },
-        {
+      },
+      {
         "name": "Subjects"
-        },
-        {
+      },
+      {
         "name": "Teachers"
-        }
+      }
     ],
     "paths": {
-        "/courses": {
-            "get": {
-                "tags": ["Courses"],
-                "summary": "Get all the courses",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/coursesResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
+      "/login": {
+        "post": {
+          "tags": [
+            "Login"
+          ],
+          "summary": "Log in",
+          "requestBody": {
+            "description": "Enter email and password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginResponse"
                 }
+              }
             },
-            "post": {
-                "tags": ["Courses"],
-                "summary": "Create a new course",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Name of the course",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/coursesResponse"
-                        }
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/loginResponse"
                     }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/coursesResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
+                  }
                 }
-            }
-        },
-        "/courses/{id}": {
-            "patch": {
-                "tags": ["Courses"],
-                "summary": "Edit the course",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the course that needs to be changed",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Name of the course",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/coursesResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/coursesResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
+              }
             },
-            "delete": {
-                "tags": ["Courses"],
-                "summary": "Delete the course",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the course that needs to be deleted",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/coursesResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
                 }
+              }
             }
-        },
-        "/rooms": {
-            "get": {
-                "tags": ["Rooms"],
-                "summary": "Get all the rooms",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/roomsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": ["Rooms"],
-                "summary": "Create a new room",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Number of the room",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/roomsResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/roomsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/rooms/{id}": {
-            "patch": {
-                "tags": ["Rooms"],
-                "summary": "Edit the room",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the room that needs to be changed",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Number of the room",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/roomsResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/roomsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Rooms"],
-                "summary": "Delete the room",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the room that needs to be deleted",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/roomsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/subjects": {
-            "get": {
-                "tags": ["Subjects"],
-                "summary": "Get all the subjects",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/subjectsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": ["Subjects"],
-                "summary": "Create a new subject",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Name of the subject",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/subjectsResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/subjectsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/subjects/{id}": {
-            "patch": {
-                "tags": ["Subjects"],
-                "summary": "Edit the subject",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the subject that needs to be changed",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Name of the subject",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/subjectsResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/subjectsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Subjects"],
-                "summary": "Delete the subject",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the subject that needs to be deleted",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/subjectsResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/teachers": {
-            "get": {
-                "tags": ["Teachers"],
-                "summary": "Get all the teachers",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/teachersResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": ["Teachers"],
-                "summary": "Create a new teacher",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Name of the teacher",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/teachersResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/teachersResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/teachers/{id}": {
-            "patch": {
-                "tags": ["Teachers"],
-                "summary": "Edit the teacher",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the teacher that needs to be changed",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Name of the teacher",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/teachersResponse"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/teachersResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Teachers"],
-                "summary": "Delete the teacher",
-                "produces": [
-                    "application/json"
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the teacher that needs to be deleted",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/teachersResponse"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/invalidResponse"
-                        }
-                    }
-                }
-            }
+          },
+          "x-codegen-request-body-name": "body"
         }
+      },
+      "/courses": {
+        "get": {
+          "tags": [
+            "Courses"
+          ],
+          "summary": "Get all the courses",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/coursesResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Courses"
+          ],
+          "summary": "Create a new course",
+          "requestBody": {
+            "description": "Name of the course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/coursesResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/coursesResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/courses/{id}": {
+        "delete": {
+          "tags": [
+            "Courses"
+          ],
+          "summary": "Delete the course",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the course that needs to be deleted",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/coursesResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Courses"
+          ],
+          "summary": "Edit the course",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the course that needs to be changed",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Name of the course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/coursesResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/coursesResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/rooms": {
+        "get": {
+          "tags": [
+            "Rooms"
+          ],
+          "summary": "Get all the rooms",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/roomsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Rooms"
+          ],
+          "summary": "Create a new room",
+          "requestBody": {
+            "description": "Number of the room",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/roomsResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/roomsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/rooms/{id}": {
+        "delete": {
+          "tags": [
+            "Rooms"
+          ],
+          "summary": "Delete the room",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the room that needs to be deleted",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/roomsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Rooms"
+          ],
+          "summary": "Edit the room",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the room that needs to be changed",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Number of the room",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/roomsResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/roomsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/subjects": {
+        "get": {
+          "tags": [
+            "Subjects"
+          ],
+          "summary": "Get all the subjects",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/subjectsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Subjects"
+          ],
+          "summary": "Create a new subject",
+          "requestBody": {
+            "description": "Name of the subject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/subjectsResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/subjectsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/subjects/{id}": {
+        "delete": {
+          "tags": [
+            "Subjects"
+          ],
+          "summary": "Delete the subject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the subject that needs to be deleted",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/subjectsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Subjects"
+          ],
+          "summary": "Edit the subject",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the subject that needs to be changed",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Name of the subject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/subjectsResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/subjectsResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/teachers": {
+        "get": {
+          "tags": [
+            "Teachers"
+          ],
+          "summary": "Get all the teachers",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/teachersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Teachers"
+          ],
+          "summary": "Create a new teacher",
+          "requestBody": {
+            "description": "Name of the teacher",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/teachersResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/teachersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/teachers/{id}": {
+        "delete": {
+          "tags": [
+            "Teachers"
+          ],
+          "summary": "Delete the teacher",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the teacher that needs to be deleted",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/teachersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Teachers"
+          ],
+          "summary": "Edit the teacher",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the teacher that needs to be changed",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Name of the teacher",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/teachersResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/teachersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/users": {
+        "get": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Get all the users",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/usersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+            "bearerAuth": []
+            }
+        ]
+        },
+        "post": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Create a new user",
+          "requestBody": {
+            "description": "Name, email and password of the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/usersResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/usersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      },
+      "/users/{id}": {
+        "delete": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Delete the user",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the user that needs to be deleted",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/usersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Edit the user",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the user that needs to be changed",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Name, email and password of the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/usersResponse"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "204": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/usersResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/invalidResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "body"
+        }
+      }
     },
-    "definitions": {
-        "coursesResponse": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                }
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         },
-        "roomsResponse": {
-            "type": "object",
-            "properties": {
-                "number": {
-                    "type": "integer"
+        "schemas": {
+            "coursesResponse": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
                 }
-            }
-        },
-        "subjectsResponse": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
+            },
+            "roomsResponse": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer"
+                    }
                 }
-            }
-        },
-        "teachersResponse": {
-            "type": "object",
-            "properties": {
-                "firstName": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
+            },
+            "subjectsResponse": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
                 }
-            }
-        },
-        "invalidResponse": {
-            "type": "object",
-            "properties": {
-                "statusCode": {
-                    "type": "integer"
-                },
-                "errorMessage": {
-                    "type": "string"
+            },
+            "teachersResponse": {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "usersResponse": {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "loginResponse": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "invalidResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "integer"
+                    },
+                    "errorMessage": {
+                        "type": "string"
+                    }
                 }
             }
         }
