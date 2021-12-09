@@ -1,80 +1,91 @@
 import { Request, Response } from 'express';
+import responseCodes from '../responseCodes';
 import coursesService from '../services/coursesService';
+import { IUpdateCourse, INewCourse } from '../interfaces/coursesInterface';
 
 const coursesController = {
-  getAllCourses: (req: Request, res: Response) => {
-    const courses = coursesService.getAllCourses();
-    return res.status(200).json({
+  getAllCourses: async (req: Request, res: Response) => {
+    const courses = await coursesService.getAllCourses();
+    return res.status(responseCodes.ok).json({
       courses,
     });
   },
-  getCourseById: (req: Request, res: Response) => {
+  getCourseById: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const course = coursesService.getCourseById(id);
-    if (!course) {
-      return res.status(400).json({
-        error: `No course found with id: ${id}`,
+    if ((id === res.locals.course.id) || (res.locals.course.role === 'Admin')) {
+      const course = await coursesService.getCourseById(id);
+      if (!course) {
+        return res.status(responseCodes.badRequest).json({
+          error: `No course found with id: ${id}`,
       });
     }
-    return res.status(200).json({
+    return res.status(responseCodes.ok).json({
       course,
     });
+    }
+    return res.status(responseCodes.notAuthorized).json({
+      error: 'No permission',
+    });
   },
-  removeCourse: (req: Request, res: Response) => {
+  removeCourse: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const course = coursesService.getCourseById(id);
+    const course = await coursesService.getCourseById(id);
     if (!course) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         message: `Course not found with id: ${id}`,
       });
     }
-    coursesService.removeCourse(id);
-    return res.status(204).send();
+    await coursesService.removeCourse(id);
+    return res.status(responseCodes.noContent).json({});
   },
-  updateCourse: (req: Request, res: Response) => {
+  createCourse: async (req: Request, res: Response) => {
+    const { name } = req.body;
+    const newCourse: INewCourse = {
+      name,
+    };
+    const id = await coursesService.createCourse(newCourse);
+    return res.status(responseCodes.created).json({
+      id,
+    });
+  },
+  updateCourse: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const { name } = req.body;
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
     if (!name) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'Nothing to update',
       });
     }
     const course = coursesService.getCourseById(id);
     if (!course) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: `No course found with id: ${id}`,
       });
     }
-    coursesService.updateCourse({ id, name });
-    return res.status(204).send();
-  },
-  createCourse: (req: Request, res: Response) => {
-    const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({
-        error: 'Course name is required',
-      });
-    }
-    const id = coursesService.createCourse(name);
-    return res.status(201).json({
+    const updateCourse: IUpdateCourse = {
       id,
-      name
-    });
+    };
+    if (name) updateCourse.name = name;
+    const result = await coursesService.updateCourse(updateCourse);
+    if (!result) {
+      res.status(responseCodes.notFound).json({});
+    }
+    return res.status(responseCodes.noContent).json({});
   },
 };
 

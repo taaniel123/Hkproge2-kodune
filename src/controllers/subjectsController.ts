@@ -1,80 +1,91 @@
 import { Request, Response } from 'express';
+import responseCodes from '../responseCodes';
 import subjectsService from '../services/subjectsService';
+import { IUpdateSubject, INewSubject } from '../interfaces/subjectsInterface';
 
 const subjectsController = {
-  getAllSubjects: (req: Request, res: Response) => {
-    const subjects = subjectsService.getAllSubjects();
-    return res.status(200).json({
+  getAllSubjects: async (req: Request, res: Response) => {
+    const subjects = await subjectsService.getAllSubjects();
+    return res.status(responseCodes.ok).json({
       subjects,
     });
   },
-  getSubjectById: (req: Request, res: Response) => {
+  getSubjectById: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const subject = subjectsService.getSubjectById(id);
-    if (!subject) {
-      return res.status(400).json({
-        error: `No subject found with id: ${id}`,
+    if ((id === res.locals.Subject.id) || (res.locals.Subject.role === 'Admin')) {
+      const subject = await subjectsService.getSubjectById(id);
+      if (!subject) {
+        return res.status(responseCodes.badRequest).json({
+          error: `No subject found with id: ${id}`,
       });
     }
-    return res.status(200).json({
+    return res.status(responseCodes.ok).json({
       subject,
     });
+    }
+    return res.status(responseCodes.notAuthorized).json({
+      error: 'No permission',
+    });
   },
-  removeSubject: (req: Request, res: Response) => {
+  removeSubject: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const subject = subjectsService.getSubjectById(id);
+    const subject = await subjectsService.getSubjectById(id);
     if (!subject) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         message: `Subject not found with id: ${id}`,
       });
     }
-    subjectsService.removeSubject(id);
-    return res.status(204).send();
+    await subjectsService.removeSubject(id);
+    return res.status(responseCodes.noContent).json({});
   },
-  updateSubject: (req: Request, res: Response) => {
+  createSubject: async (req: Request, res: Response) => {
+    const { name } = req.body;
+    const newSubject: INewSubject = {
+      name,
+    };
+    const id = await subjectsService.createSubject(newSubject);
+    return res.status(responseCodes.created).json({
+      id,
+    });
+  },
+  updateSubject: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const { name } = req.body;
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
     if (!name) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'Nothing to update',
       });
     }
     const subject = subjectsService.getSubjectById(id);
     if (!subject) {
-      return res.status(400).json({
-        error: `No Subject found with id: ${id}`,
+      return res.status(responseCodes.badRequest).json({
+        error: `No subject found with id: ${id}`,
       });
     }
-    subjectsService.updateSubject({ id, name });
-    return res.status(204).send();
-  },
-  createSubject: (req: Request, res: Response) => {
-    const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({
-        error: 'Subject name is required',
-      });
-    }
-    const id = subjectsService.createSubject(name);
-    return res.status(201).json({
+    const updateSubject: IUpdateSubject = {
       id,
-      name
-    });
+    };
+    if (name) updateSubject.name = name;
+    const result = await subjectsService.updateSubject(updateSubject);
+    if (!result) {
+      res.status(responseCodes.notFound).json({});
+    }
+    return res.status(responseCodes.noContent).json({});
   },
 };
 

@@ -1,45 +1,72 @@
-import db from '../db';
-import { User, UpdateUser, NewUser } from '../interfaces/usersInterface';
+import pool from '../database';
+import { FieldPacket, ResultSetHeader } from 'mysql2';
+import { IUpdateUser, INewUser, IUser } from '../interfaces/usersInterface';
 import hashService from '../hashService';
 
 const usersService = {
-  getAllUsers: (): User[] => {
-    const { users } = db;
-    return users;
-  },
-  getUserById: (id: number): User | undefined => {
-    const user = db.users.find((element) => element.id === id);
-    return user;
-  },
-  getUserByEmail: (email: string): User | undefined => {
-    const user = db.users.find((element) => element.email === email);
-    return user;
-  },
-  removeUser: (id: number): boolean => {
-    const index = db.users.findIndex((element) => element.id === id);
-    db.users.splice(index, 1);
-    return true;
-  },
-  createUser: async (newUser: NewUser) => {
-    const id = db.users.length + 1;
-    const hashedPassword = await hashService.hash(newUser.password);
-    db.users.push({
-      id,
-      ...newUser,
-      password: hashedPassword
-    });
-    return id;
-  },
-  updateUser: (user: UpdateUser): boolean => {
-    const { id, firstName, lastName } = user;
-    const index = db.users.findIndex((element) => element.id === id);
-    if (firstName) {
-      db.users[index].firstName = firstName;
+  getAllUsers: async (): Promise<IUser[] | false> => {
+    try {
+      const [users]: [IUser[], FieldPacket[]] = await pool.query('SELECT id, firstName, lastName, email, dateCreated, role FROM users WHERE dateDeleted IS NULL');
+      return users;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    if (lastName) {
-      db.users[index].lastName = lastName;
+  },
+  getUserById: async (id: number): Promise<IUser | false> => {
+    try {
+      const [users]: [IUser[], FieldPacket[]] = await pool.query(
+        'SELECT id, firstName, lastName, email, dateCreated, dateUpdated, dateDeleted FROM users WHERE id = ? AND dateDeleted IS NULL LIMIT 1', [id],
+      );
+      return users[0];
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    return true;
+  },
+  getUserByEmail: async (email: string): Promise<IUser | false> => {
+    try {
+      const [user]: [IUser[], FieldPacket[]] = await pool.query('SELECT * FROM users WHERE email = ? AND dateDeleted IS NULL', [email]);
+      return user[0];
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  removeUser: async (id: number): Promise<boolean> => {
+    try {
+      await pool.query('UPDATE users SET dateDeleted = ? WHERE id = ?', [new Date(), id]);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  createUser: async (newUser: INewUser): Promise<number | false> => {
+    try {
+      const hashedPassword = await hashService.hash(newUser.password);
+      const user = {
+        ...newUser,
+        password: hashedPassword,
+      };
+      const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO users SET ?', [user]);
+      return result.insertId;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  updateUser: async (user: IUpdateUser): Promise<boolean> => {
+    try {
+      const userToUpdate = { ...user };
+      if (user.password) userToUpdate.password = await hashService.hash(user.password);
+      const result = await pool.query('UPDATE users SET ? WHERE id = ?', [userToUpdate, user.id]);
+      console.log(result);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   },
 };
 

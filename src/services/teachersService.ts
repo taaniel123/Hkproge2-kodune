@@ -1,39 +1,60 @@
-import db from '../db';
-import Teacher from '../interfaces/teachersInterface';
+import pool from '../database';
+import { FieldPacket, ResultSetHeader } from 'mysql2';
+import { IUpdateTeacher, INewTeacher, ITeacher } from '../interfaces/teachersInterface';
+import hashService from '../hashService';
 
 const teachersService = {
-  getAllTeachers: (): Teacher[] => {
-    const { teachers } = db;
-    return teachers;
-  },
-  getTeacherById: (id: number): Teacher | undefined => {
-    const teacher = db.teachers.find((element) => element.id === id);
-    return teacher;
-  },
-  removeTeacher: (id: number): boolean => {
-    const index = db.teachers.findIndex((element) => element.id === id);
-    db.teachers.splice(index, 1);
-    return true;
-  },
-  createTeacher: (firstName: string, lastName: string) => {
-    const id = db.teachers.length + 1;
-    db.teachers.push({
-      id,
-      firstName,
-      lastName,
-    });
-    return id;
-  },
-  updateTeacher: (data: { id: number, firstName?: string, lastName?: string }): boolean => {
-    const { id, firstName, lastName } = data;
-    const index = db.teachers.findIndex((element) => element.id === id);
-    if (firstName) {
-      db.teachers[index].firstName = firstName;
+  getAllTeachers: async (): Promise<ITeacher[] | false> => {
+    try {
+      const [teachers]: [ITeacher[], FieldPacket[]] = await pool.query('SELECT id, firstName, lastName, dateCreated FROM teachers WHERE dateDeleted IS NULL');
+      return teachers;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    if (lastName) {
-      db.teachers[index].lastName = lastName;
+  },
+  getTeacherById: async (id: number): Promise<ITeacher | false> => {
+    try {
+      const [teachers]: [ITeacher[], FieldPacket[]] = await pool.query(
+        'SELECT id, firstName, lastName, dateCreated, dateUpdated, dateDeleted FROM teachers WHERE id = ? AND dateDeleted IS NULL LIMIT 1', [id],
+      );
+      return teachers[0];
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    return true;
+  },
+  removeTeacher: async (id: number): Promise<boolean> => {
+    try {
+      await pool.query('UPDATE teachers SET dateDeleted = ? WHERE id = ?', [new Date(), id]);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  createTeacher: async (newTeacher: INewTeacher): Promise<number | false> => {
+    try {
+      const Teacher = {
+        ...newTeacher,
+      };
+      const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO teachers SET ?', [Teacher]);
+      return result.insertId;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  updateTeacher: async (Teacher: IUpdateTeacher): Promise<boolean> => {
+    try {
+      const teacherToUpdate = { ...Teacher };
+      const result = await pool.query('UPDATE teachers SET ? WHERE id = ?', [teacherToUpdate, Teacher.id]);
+      console.log(result);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   },
 };
 

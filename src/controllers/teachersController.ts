@@ -1,85 +1,108 @@
 import { Request, Response } from 'express';
+import responseCodes from '../responseCodes';
 import teachersService from '../services/teachersService';
+import { IUpdateTeacher, INewTeacher } from '../interfaces/teachersInterface';
 
 const teachersController = {
-  getAllTeachers: (req: Request, res: Response) => {
-    const teachers = teachersService.getAllTeachers();
-    return res.status(200).json({
+  getAllTeachers: async (req: Request, res: Response) => {
+    const teachers = await teachersService.getAllTeachers();
+    return res.status(responseCodes.ok).json({
       teachers,
     });
   },
-  getTeacherById: (req: Request, res: Response) => {
+  getTeacherById: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const teacher = teachersService.getTeacherById(id);
-    if (!teacher) {
-      return res.status(400).json({
-        error: `No teacher found with id: ${id}`,
+    if ((id === res.locals.Teacher.id) || (res.locals.Teacher.role === 'Admin')) {
+      const teacher = await teachersService.getTeacherById(id);
+      if (!teacher) {
+        return res.status(responseCodes.badRequest).json({
+          error: `No teacher found with id: ${id}`,
       });
     }
-    return res.status(200).json({
+    return res.status(responseCodes.ok).json({
       teacher,
     });
+    }
+    return res.status(responseCodes.notAuthorized).json({
+      error: 'No permission',
+    });
   },
-  removeTeacher: (req: Request, res: Response) => {
+  removeTeacher: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const teacher = teachersService.getTeacherById(id);
+    const teacher = await teachersService.getTeacherById(id);
     if (!teacher) {
-      return res.status(400).json({
-        message: `teacher not found with id: ${id}`,
+      return res.status(responseCodes.badRequest).json({
+        message: `Teacher not found with id: ${id}`,
       });
     }
-    teachersService.removeTeacher(id);
-    return res.status(204).send();
+    await teachersService.removeTeacher(id);
+    return res.status(responseCodes.noContent).json({});
   },
-  updateTeacher: (req: Request, res: Response) => {
+  createTeacher: async (req: Request, res: Response) => {
+    const { firstName, lastName } = req.body;
+    const newTeacher: INewTeacher = {
+      firstName,
+      lastName
+    };
+    if (!firstName) {
+      return res.status(responseCodes.badRequest).json({
+        error: 'First name is required',
+      });
+    }
+    if (!lastName) {
+      return res.status(responseCodes.badRequest).json({
+        error: 'Last name is required',
+      });
+    }
+    const id = await teachersService.createTeacher(newTeacher);
+    return res.status(responseCodes.created).json({
+      id,
+    });
+  },
+  updateTeacher: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const { firstName, lastName } = req.body;
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    if (!firstName && !lastName) {
-      return res.status(400).json({
+    if (!firstName) {
+      return res.status(responseCodes.badRequest).json({
+        error: 'Nothing to update',
+      });
+    }
+    if (!lastName) {
+      return res.status(responseCodes.badRequest).json({
         error: 'Nothing to update',
       });
     }
     const teacher = teachersService.getTeacherById(id);
     if (!teacher) {
-      return res.status(400).json({
-        error: `No teacher found with id: ${id}`,
+      return res.status(responseCodes.badRequest).json({
+        error: `No Teacher found with id: ${id}`,
       });
     }
-    teachersService.updateTeacher({ id, firstName, lastName });
-    return res.status(204).send();
-  },
-  createTeacher: (req: Request, res: Response) => {
-    const { firstName, lastName } = req.body;
-    if (!firstName) {
-      return res.status(400).json({
-        error: 'First name is required',
-      });
-    }
-    if (!lastName) {
-      return res.status(400).json({
-        error: 'Last name is required',
-      });
-    }
-    const id = teachersService.createTeacher(firstName, lastName);
-    return res.status(201).json({
+    const updateTeacher: IUpdateTeacher = {
       id,
-      firstName, lastName
-    });
+    };
+    if (firstName) updateTeacher.firstName = firstName;
+    if (lastName) updateTeacher.lastName = lastName;
+    const result = await teachersService.updateTeacher(updateTeacher);
+    if (!result) {
+      res.status(responseCodes.notFound).json({});
+    }
+    return res.status(responseCodes.noContent).json({});
   },
 };
 

@@ -1,35 +1,60 @@
-import db from '../db';
-import Room from '../interfaces/roomsInterface';
+import pool from '../database';
+import { FieldPacket, ResultSetHeader } from 'mysql2';
+import { IUpdateRoom, INewRoom, IRoom } from '../interfaces/roomsInterface';
+import hashService from '../hashService';
 
 const roomsService = {
-    getAllRooms: (): Room[] => {
-      const { rooms } = db;
+  getAllRooms: async (): Promise<IRoom[] | false> => {
+    try {
+      const [rooms]: [IRoom[], FieldPacket[]] = await pool.query('SELECT id, number, dateCreated FROM rooms WHERE dateDeleted IS NULL');
       return rooms;
-    },
-    getRoomById: (id: number): Room | undefined => {
-      const room = db.rooms.find((element) => element.id === id);
-      return room;
-    },
-    removeRoom: (id: number): boolean => {
-      const index = db.rooms.findIndex((element) => element.id === id);
-      db.rooms.splice(index, 1);
-      return true;
-    },
-    createRoom: (number: number) => {
-      const id = db.rooms.length + 1;
-      db.rooms.push({
-        id,
-        number
-      });
-      return id;
-    },
-    updateRoom: (data: { id: number, number: number }): boolean => {
-      const { id, number } = data;
-      const index = db.rooms.findIndex((element) => element.id === id);
-      if (number) {
-        db.rooms[index].number = number;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  getRoomById: async (id: number): Promise<IRoom | false> => {
+      try {
+        const [rooms]: [IRoom[], FieldPacket[]] = await pool.query(
+          'SELECT id, number, dateCreated, dateUpdated, dateDeleted FROM rooms WHERE id = ? AND dateDeleted IS NULL LIMIT 1', [id],
+        );
+        return rooms[0];
+      } catch (error) {
+        console.log(error);
+        return false;
       }
-      return true;
+    },
+    removeRoom: async (id: number): Promise<boolean> => {
+      try {
+        await pool.query('UPDATE rooms SET dateDeleted = ? WHERE id = ?', [new Date(), id]);
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    },
+    createRoom: async (newRoom: INewRoom): Promise<number | false> => {
+      try {
+        const room = {
+          ...newRoom,
+        };
+        const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO rooms SET ?', [room]);
+        return result.insertId;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    },
+    updateRoom: async (room: IUpdateRoom): Promise<boolean> => {
+      try {
+        const RoomToUpdate = { ...room };
+        const result = await pool.query('UPDATE rooms SET ? WHERE id = ?', [RoomToUpdate, room.id]);
+        console.log(result);
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
     },
   };
   

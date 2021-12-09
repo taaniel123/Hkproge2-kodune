@@ -1,80 +1,91 @@
 import { Request, Response } from 'express';
+import responseCodes from '../responseCodes';
 import roomsService from '../services/roomsService';
+import { IUpdateRoom, INewRoom } from '../interfaces/roomsInterface';
 
 const roomsController = {
-  getAllRooms: (req: Request, res: Response) => {
-    const rooms = roomsService.getAllRooms();
-    return res.status(200).json({
+  getAllRooms: async (req: Request, res: Response) => {
+    const rooms = await roomsService.getAllRooms();
+    return res.status(responseCodes.ok).json({
       rooms,
     });
   },
-  getRoomById: (req: Request, res: Response) => {
+  getRoomById: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const room = roomsService.getRoomById(id);
-    if (!room) {
-      return res.status(400).json({
-        error: `No room found with id: ${id}`,
+    if ((id === res.locals.room.id) || (res.locals.room.role === 'Admin')) {
+      const room = await roomsService.getRoomById(id);
+      if (!room) {
+        return res.status(responseCodes.badRequest).json({
+          error: `No room found with id: ${id}`,
       });
     }
-    return res.status(200).json({
+    return res.status(responseCodes.ok).json({
       room,
     });
+    }
+    return res.status(responseCodes.notAuthorized).json({
+      error: 'No permission',
+    });
   },
-  removeRoom: (req: Request, res: Response) => {
+  removeRoom: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
-    const room = roomsService.getRoomById(id);
+    const room = await roomsService.getRoomById(id);
     if (!room) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         message: `Room not found with id: ${id}`,
       });
     }
-    roomsService.removeRoom(id);
-    return res.status(204).send();
+    await roomsService.removeRoom(id);
+    return res.status(responseCodes.noContent).json({});
   },
-  updateRoom: (req: Request, res: Response) => {
+  createRoom: async (req: Request, res: Response) => {
+    const { number } = req.body;
+    const newRoom: INewRoom = {
+      number,
+    };
+    const id = await roomsService.createRoom(newRoom);
+    return res.status(responseCodes.created).json({
+      id,
+    });
+  },
+  updateRoom: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const { number } = req.body;
     if (!id) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
       });
     }
     if (!number) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: 'Nothing to update',
       });
     }
     const room = roomsService.getRoomById(id);
     if (!room) {
-      return res.status(400).json({
+      return res.status(responseCodes.badRequest).json({
         error: `No room found with id: ${id}`,
       });
     }
-    roomsService.updateRoom({ id, number });
-    return res.status(204).send();
-  },
-  createRoom: (req: Request, res: Response) => {
-    const { number } = req.body;
-    if (!number) {
-      return res.status(400).json({
-        error: 'Room number is required',
-      });
-    }
-    const id = roomsService.createRoom(number);
-    return res.status(201).json({
+    const updateRoom: IUpdateRoom = {
       id,
-      number
-    });
+    };
+    if (number) updateRoom.number = number;
+    const result = await roomsService.updateRoom(updateRoom);
+    if (!result) {
+      res.status(responseCodes.notFound).json({});
+    }
+    return res.status(responseCodes.noContent).json({});
   },
 };
 

@@ -1,35 +1,60 @@
-import db from '../db';
-import Subject from '../interfaces/subjectsInterface';
+import pool from '../database';
+import { FieldPacket, ResultSetHeader } from 'mysql2';
+import { IUpdateSubject, INewSubject, ISubject } from '../interfaces/subjectsInterface';
+import hashService from '../hashService';
 
 const subjectsService = {
-    getAllSubjects: (): Subject[] => {
-      const { subjects } = db;
+  getAllSubjects: async (): Promise<ISubject[] | false> => {
+    try {
+      const [subjects]: [ISubject[], FieldPacket[]] = await pool.query('SELECT id, name, dateCreated FROM subjects WHERE dateDeleted IS NULL');
       return subjects;
-    },
-    getSubjectById: (id: number): Subject | undefined => {
-      const subject = db.subjects.find((element) => element.id === id);
-      return subject;
-    },
-    removeSubject: (id: number): boolean => {
-      const index = db.subjects.findIndex((element) => element.id === id);
-      db.subjects.splice(index, 1);
-      return true;
-    },
-    createSubject: (name: string) => {
-      const id = db.subjects.length + 1;
-      db.subjects.push({
-        id,
-        name
-      });
-      return id;
-    },
-    updateSubject: (data: { id: number, name?: string }): boolean => {
-      const { id, name } = data;
-      const index = db.subjects.findIndex((element) => element.id === id);
-      if (name) {
-        db.subjects[index].name = name;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  },
+  getSubjectById: async (id: number): Promise<ISubject | false> => {
+      try {
+        const [subjects]: [ISubject[], FieldPacket[]] = await pool.query(
+          'SELECT id, name, dateCreated, dateUpdated, dateDeleted FROM subjects WHERE id = ? AND dateDeleted IS NULL LIMIT 1', [id],
+        );
+        return subjects[0];
+      } catch (error) {
+        console.log(error);
+        return false;
       }
-      return true;
+    },
+    removeSubject: async (id: number): Promise<boolean> => {
+      try {
+        await pool.query('UPDATE subjects SET dateDeleted = ? WHERE id = ?', [new Date(), id]);
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    },
+    createSubject: async (newSubject: INewSubject): Promise<number | false> => {
+      try {
+        const subject = {
+          ...newSubject,
+        };
+        const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO subjects SET ?', [subject]);
+        return result.insertId;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    },
+    updateSubject: async (Subject: IUpdateSubject): Promise<boolean> => {
+      try {
+        const subjectToUpdate = { ...Subject };
+        const result = await pool.query('UPDATE subjects SET ? WHERE id = ?', [subjectToUpdate, Subject.id]);
+        console.log(result);
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
     },
   };
   

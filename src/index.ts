@@ -30,10 +30,10 @@ app.post('/users', usersController.createUser);
 app.use(isLoggedIn);
 
 
-app.get('/courses', coursesController.getAllCourses);
-app.get('/rooms', roomsController.getAllRooms);
-app.get('/subjects', subjectsController.getAllSubjects);
-app.get('/teachers', teachersController.getAllTeachers);
+app.get('/courses', isAdmin, coursesController.getAllCourses);
+app.get('/rooms', isAdmin, roomsController.getAllRooms);
+app.get('/subjects', isAdmin, subjectsController.getAllSubjects);
+app.get('/teachers', isAdmin, teachersController.getAllTeachers);
 app.get('/users', isAdmin, usersController.getAllUsers);
 
 
