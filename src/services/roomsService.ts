@@ -49,7 +49,6 @@ const roomsService = {
       try {
         const RoomToUpdate = { ...room };
         const result = await pool.query('UPDATE rooms SET ? WHERE id = ?', [RoomToUpdate, room.id]);
-        console.log(result);
         return true;
       } catch (error) {
         console.log(error);

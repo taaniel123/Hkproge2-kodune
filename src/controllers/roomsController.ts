@@ -17,7 +17,7 @@ const roomsController = {
         error: 'No valid id provided',
       });
     }
-    if ((id === res.locals.room.id) || (res.locals.room.role === 'Admin')) {
+    if ((id === res.locals.user.id) || (res.locals.user.role === 'Admin')) {
       const room = await roomsService.getRoomById(id);
       if (!room) {
         return res.status(responseCodes.badRequest).json({

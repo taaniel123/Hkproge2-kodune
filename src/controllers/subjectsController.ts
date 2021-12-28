@@ -17,7 +17,7 @@ const subjectsController = {
         error: 'No valid id provided',
       });
     }
-    if ((id === res.locals.Subject.id) || (res.locals.Subject.role === 'Admin')) {
+    if ((id === res.locals.user.id) || (res.locals.user.role === 'Admin')) {
       const subject = await subjectsService.getSubjectById(id);
       if (!subject) {
         return res.status(responseCodes.badRequest).json({

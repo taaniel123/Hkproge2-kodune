@@ -61,7 +61,6 @@ const usersService = {
       const userToUpdate = { ...user };
       if (user.password) userToUpdate.password = await hashService.hash(user.password);
       const result = await pool.query('UPDATE users SET ? WHERE id = ?', [userToUpdate, user.id]);
-      console.log(result);
       return true;
     } catch (error) {
       console.log(error);

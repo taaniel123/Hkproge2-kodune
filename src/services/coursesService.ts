@@ -49,7 +49,6 @@ const coursesService = {
       try {
         const courseToUpdate = { ...course };
         const result = await pool.query('UPDATE courses SET ? WHERE id = ?', [courseToUpdate, course.id]);
-        console.log(result);
         return true;
       } catch (error) {
         console.log(error);

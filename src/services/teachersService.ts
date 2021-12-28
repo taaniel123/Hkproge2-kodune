@@ -49,7 +49,6 @@ const teachersService = {
     try {
       const teacherToUpdate = { ...Teacher };
       const result = await pool.query('UPDATE teachers SET ? WHERE id = ?', [teacherToUpdate, Teacher.id]);
-      console.log(result);
       return true;
     } catch (error) {
       console.log(error);

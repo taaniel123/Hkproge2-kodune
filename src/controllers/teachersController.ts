@@ -17,7 +17,7 @@ const teachersController = {
         error: 'No valid id provided',
       });
     }
-    if ((id === res.locals.Teacher.id) || (res.locals.Teacher.role === 'Admin')) {
+    if ((id === res.locals.user.id) || (res.locals.user.role === 'Admin')) {
       const teacher = await teachersService.getTeacherById(id);
       if (!teacher) {
         return res.status(responseCodes.badRequest).json({

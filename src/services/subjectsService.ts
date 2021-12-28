@@ -49,7 +49,6 @@ const subjectsService = {
       try {
         const subjectToUpdate = { ...Subject };
         const result = await pool.query('UPDATE subjects SET ? WHERE id = ?', [subjectToUpdate, Subject.id]);
-        console.log(result);
         return true;
       } catch (error) {
         console.log(error);

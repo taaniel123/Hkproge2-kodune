@@ -17,7 +17,7 @@ const coursesController = {
         error: 'No valid id provided',
       });
     }
-    if ((id === res.locals.course.id) || (res.locals.course.role === 'Admin')) {
+    if ((id === res.locals.user.id) || (res.locals.user.role === 'Admin')) {
       const course = await coursesService.getCourseById(id);
       if (!course) {
         return res.status(responseCodes.badRequest).json({
