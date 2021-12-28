@@ -130,7 +130,7 @@ describe('Users controller', () => {
             const response = await request(app)
                 .post('/users')
                 .set('Authorization', `Bearer ${token}`)
-                .send({firstName: "asd", lastName: "asd", email: "asd@asd.ee", password: "asd"});
+                .send({firstName: "asd", lastName: "asd", email: `${userID}@asd.ee`, password: "asd"});
             expect(response.body).to.be.a('object');
             expect(response.status).to.equal(201);
             expect(response.body).to.have.key('id');
@@ -144,7 +144,7 @@ describe('Users controller', () => {
             const response = await request(app)
                 .patch(`/users/${userID}`)
                 .set('Authorization', `Bearer ${token}`)
-                .send({firstName: "patch", lastName: "patch", email: "patch@asd.ee", password: "patch"});
+                .send({firstName: "patch", lastName: "patch", email: `${userID}@asd.ee`, password: "patch"});
             expect(response.body).to.be.a('object');
             expect(response.body).to.be.empty;
             expect(response.status).to.equal(204);
