@@ -75,6 +75,17 @@ describe('Courses controller', () => {
             expect(response.body.error).to.be.a('string');
             expect(response.body.error).to.equal('No valid id provided');
         });
+        // getting a course but course doesn't exist
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .get('/courses/999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No course found with id: 999999');
+        });
     });
     describe('POST /courses', () => {
         // posting a new course without a name
@@ -103,6 +114,18 @@ describe('Courses controller', () => {
         });
     });
     describe('PATCH /courses/:id', () => {
+        // updating a course but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .patch('/courses/999999')
+                .set('Authorization', `Bearer ${token}`)
+                .send({name: "patchpatch"});
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No course found with id: 999999');
+        });
         // updating a course with exising id
         it('responds with code 204 and empty object', async () => {
             const response = await request(app)
@@ -110,8 +133,7 @@ describe('Courses controller', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send({name: "patchpatch"});
             expect(response.body).to.be.a('object');
-            expect(response.body).to.be.empty;
-            expect(response.status).to.equal(204);
+            expect(response.status).to.equal(200);
         });
         // updating a course but id is invalid
         it('responds with code 400 and error message because of no valid id', async () => {
@@ -148,6 +170,16 @@ describe('Courses controller', () => {
             expect(response.status).to.equal(204);
         });
         // deleting a course but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .delete('/courses/9999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('message');
+            expect(response.body.message).to.be.a('string');
+            expect(response.body.message).to.equal('Course not found with id: 9999999');
+        });
         it('responds with code 400 and error message because of no valid id', async () => {
             const response = await request(app)
                 .delete('/courses/0')

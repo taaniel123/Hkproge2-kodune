@@ -71,7 +71,7 @@ const subjectsController = {
         error: 'Nothing to update',
       });
     }
-    const subject = subjectsService.getSubjectById(id);
+    const subject = await subjectsService.getSubjectById(id);
     if (!subject) {
       return res.status(responseCodes.badRequest).json({
         error: `No subject found with id: ${id}`,

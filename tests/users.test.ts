@@ -75,6 +75,17 @@ describe('Users controller', () => {
             expect(response.body.error).to.be.a('string');
             expect(response.body.error).to.equal('No valid id provided');
         });
+        // getting a user but user doesn't exist
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .get('/users/999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No user found with id: 999999');
+        });
     });
     describe('POST /users', () => {
         // posting a new user without a first name
@@ -139,6 +150,18 @@ describe('Users controller', () => {
         });
     });
     describe('PATCH /users/:id', () => {
+        // updating a user but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .patch('/users/999999')
+                .set('Authorization', `Bearer ${token}`)
+                .send({firstName: "patch", lastName: "patch"});
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No user found with id: 999999');
+        });
         // updating a user with exising id
         it('responds with code 204 and empty object', async () => {
             const response = await request(app)
@@ -182,6 +205,17 @@ describe('Users controller', () => {
             expect(response.body).to.be.a('object');
             expect(response.body).to.be.empty;
             expect(response.status).to.equal(204);
+        });
+        // deleting a user but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .delete('/users/9999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('message');
+            expect(response.body.message).to.be.a('string');
+            expect(response.body.message).to.equal('User not found with id: 9999999');
         });
         // deleting a user but id is invalid
         it('responds with code 400 and error message because of no valid id', async () => {

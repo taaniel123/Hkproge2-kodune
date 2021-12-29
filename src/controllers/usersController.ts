@@ -100,7 +100,7 @@ const usersController = {
         error: 'Nothing to update',
       });
     }
-    const user = usersService.getUserById(id);
+    const user = await usersService.getUserById(id);
     if (!user) {
       return res.status(responseCodes.badRequest).json({
         error: `No user found with id: ${id}`,

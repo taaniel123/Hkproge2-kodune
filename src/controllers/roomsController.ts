@@ -71,7 +71,7 @@ const roomsController = {
         error: 'Nothing to update',
       });
     }
-    const room = roomsService.getRoomById(id);
+    const room = await roomsService.getRoomById(id);
     if (!room) {
       return res.status(responseCodes.badRequest).json({
         error: `No room found with id: ${id}`,

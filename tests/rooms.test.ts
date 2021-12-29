@@ -75,6 +75,17 @@ describe('Rooms controller', () => {
             expect(response.body.error).to.be.a('string');
             expect(response.body.error).to.equal('No valid id provided');
         });
+        // getting a room but room doesn't exist
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .get('/rooms/999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No room found with id: 999999');
+        });
     });
     describe('POST /rooms', () => {
         // posting a new room without a number
@@ -103,6 +114,18 @@ describe('Rooms controller', () => {
         });
     });
     describe('PATCH /rooms/:id', () => {
+        // updating a room but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .patch('/rooms/999999')
+                .set('Authorization', `Bearer ${token}`)
+                .send({number: 2});
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No room found with id: 999999');
+        });
         // updating a room with exising id
         it('responds with code 204 and empty object', async () => {
             const response = await request(app)
@@ -146,6 +169,17 @@ describe('Rooms controller', () => {
             expect(response.body).to.be.a('object');
             expect(response.body).to.be.empty;
             expect(response.status).to.equal(204);
+        });
+        // deleting a room but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .delete('/rooms/9999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('message');
+            expect(response.body.message).to.be.a('string');
+            expect(response.body.message).to.equal('Room not found with id: 9999999');
         });
         // deleting a room but id is invalid
         it('responds with code 400 and error message because of no valid id', async () => {

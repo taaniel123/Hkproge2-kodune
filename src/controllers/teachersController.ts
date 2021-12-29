@@ -87,10 +87,10 @@ const teachersController = {
         error: 'Nothing to update',
       });
     }
-    const teacher = teachersService.getTeacherById(id);
+    const teacher = await teachersService.getTeacherById(id);
     if (!teacher) {
       return res.status(responseCodes.badRequest).json({
-        error: `No Teacher found with id: ${id}`,
+        error: `No teacher found with id: ${id}`,
       });
     }
     const updateTeacher: IUpdateTeacher = {

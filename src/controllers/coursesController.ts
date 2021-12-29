@@ -61,6 +61,7 @@ const coursesController = {
   updateCourse: async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const { name } = req.body;
+    const course = await coursesService.getCourseById(id);
     if (!id) {
       return res.status(responseCodes.badRequest).json({
         error: 'No valid id provided',
@@ -71,7 +72,6 @@ const coursesController = {
         error: 'Nothing to update',
       });
     }
-    const course = coursesService.getCourseById(id);
     if (!course) {
       return res.status(responseCodes.badRequest).json({
         error: `No course found with id: ${id}`,
@@ -85,7 +85,9 @@ const coursesController = {
     if (!result) {
       res.status(responseCodes.notFound).json({});
     }
-    return res.status(responseCodes.noContent).json({});
+    return res.status(responseCodes.ok).json({
+      message: 'Course updated',
+    });
   },
 };
 

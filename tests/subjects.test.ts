@@ -75,6 +75,17 @@ describe('Subjects controller', () => {
             expect(response.body.error).to.be.a('string');
             expect(response.body.error).to.equal('No valid id provided');
         });
+          // getting a subject but subject doesn't exist
+          it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .get('/subjects/999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No subject found with id: 999999');
+        });
     });
     describe('POST /subjects', () => {
         // posting a new subject without a name
@@ -103,6 +114,18 @@ describe('Subjects controller', () => {
         });
     });
     describe('PATCH /subjects/:id', () => {
+        // updating a subject but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .patch('/subjects/999999')
+                .set('Authorization', `Bearer ${token}`)
+                .send({name: "patchpatch"});
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('error');
+            expect(response.body.error).to.be.a('string');
+            expect(response.body.error).to.equal('No subject found with id: 999999');
+        });
         // updating a subject with exising id
         it('responds with code 204 and empty object', async () => {
             const response = await request(app)
@@ -146,6 +169,17 @@ describe('Subjects controller', () => {
             expect(response.body).to.be.a('object');
             expect(response.body).to.be.empty;
             expect(response.status).to.equal(204);
+        });
+        // deleting a subject but id is invalid
+        it('responds with code 400 and error message because of no valid id', async () => {
+            const response = await request(app)
+                .delete('/subjects/9999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(response.body).to.be.a('object');
+            expect(response.status).to.equal(400);
+            expect(response.body).to.have.key('message');
+            expect(response.body.message).to.be.a('string');
+            expect(response.body.message).to.equal('Subject not found with id: 9999999');
         });
         // deleting a subject but id is invalid
         it('responds with code 400 and error message because of no valid id', async () => {
